@@ -1,21 +1,27 @@
-
-
 import { useState } from 'react'
 import { PlusCircle, Trash2 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import axios from 'axios'
+import { BACKEND_URL } from '@/config'
+import { useNavigate } from 'react-router-dom'
 
 interface BankAccount {
   accountNumber: string
   bankName: string
 }
 
-export  function AccountPage() {
+export function AccountPage() {
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [aadharNumber, setAadharNumber] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
   const [bankAccounts, setBankAccounts] = useState<BankAccount[]>([{ accountNumber: '', bankName: '' }])
+
+  const navigate=useNavigate();
 
   const addBankAccount = () => {
     setBankAccounts([...bankAccounts, { accountNumber: '', bankName: '' }])
@@ -36,10 +42,25 @@ export  function AccountPage() {
     setBankAccounts(updatedAccounts)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log({ aadharNumber, phoneNumber, bankAccounts })
-    // Here you would typically send this data to your backend
+  const handleSubmit = async(e: React.FormEvent) => {
+     try{
+         e.preventDefault()
+    console.log({ name, email, password, aadharNumber, phoneNumber, bankAccounts })
+    const res=await axios.post(`${BACKEND_URL}/api/user`,{
+       email,password,name,aadharno:aadharNumber,mobileno:phoneNumber,accnos:bankAccounts
+    });
+
+    console.log(res);
+   
+
+     }
+     catch{
+         alert("error")
+
+     }
+       
+   
+
   }
 
   return (
@@ -53,6 +74,44 @@ export  function AccountPage() {
           </CardHeader>
           <CardContent className="mt-6">
             <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-gray-300 font-semibold">Name</Label>
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Enter your name"
+                  required
+                  className="bg-gray-800 border-gray-700 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-gray-300 font-semibold">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  required
+                  className="bg-gray-800 border-gray-700 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-gray-300 font-semibold">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  required
+                  className="bg-gray-800 border-gray-700 text-white placeholder-gray-500 focus:border-blue-500 focus:ring-blue-500"
+                />
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="aadhar" className="text-gray-300 font-semibold">Aadhar Card Number</Label>
                 <Input
@@ -145,3 +204,4 @@ export  function AccountPage() {
     </div>
   )
 }
+
