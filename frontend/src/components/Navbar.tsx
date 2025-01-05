@@ -1,8 +1,10 @@
 import { motion } from "framer-motion";
+import {Link, useNavigate} from "react-router-dom"
 import { Button } from "./ui/button";
 import { Shield } from "lucide-react";
 
 export function Navbar() {
+  const navigate=useNavigate()
   return (
     <motion.nav 
       initial={{ y: -100 }}
@@ -17,15 +19,11 @@ export function Navbar() {
           </span>
         </div>
         
-        <div className="hidden md:flex items-center space-x-8">
-          <a href="#features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Features</a>
-          <a href="#how-it-works" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">How it Works</a>
-          <a href="#about" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">About</a>
-        </div>
+       
 
         <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="sm">Log in</Button>
-          <Button variant="secondary" size="sm">Get Started</Button>
+          <Button variant="ghost" onClick={() => navigate("/login")} size="sm">Log in</Button>
+          <Button variant="secondary" size="sm" onClick={() => navigate("/signup")}>Sign-up</Button>
         </div>
       </div>
     </motion.nav>
