@@ -21,9 +21,20 @@ model User{
    name String
    mobileno String
    aadharno String
-   accnos String[]
+   accnos Account[]
    scores Score[]
+   otp OTP[]
 }
+
+model Account{
+   id Int @id @default(autoincrement())
+   userId Int
+   bankName String
+   accno String
+   user User @relation(fields: [userId],references: [id],onDelete: Cascade)
+
+}
+
 
 model Score{
    id Int @id @default(autoincrement())
@@ -31,6 +42,14 @@ model Score{
    scores String[]
    user User @relation(fields: [userId],references: [id],onDelete: Cascade)
 
+}
+
+
+model OTP{
+   id Int @id @default(autoincrement())
+   userId Int 
+   otp Int
+   user User @relation(fields: [userId],references: [id],onDelete: Cascade)
 }
 
 

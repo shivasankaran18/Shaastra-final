@@ -1,0 +1,11 @@
+-- CreateTable
+CREATE TABLE "OTP" (
+    "id" SERIAL NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "otp" INTEGER NOT NULL,
+
+    CONSTRAINT "OTP_pkey" PRIMARY KEY ("id")
+);
+
+-- AddForeignKey
+ALTER TABLE "OTP" ADD CONSTRAINT "OTP_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

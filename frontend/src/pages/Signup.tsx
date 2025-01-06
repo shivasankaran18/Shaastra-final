@@ -46,9 +46,12 @@ export function AccountPage() {
      try{
          e.preventDefault()
     console.log({ name, email, password, aadharNumber, phoneNumber, bankAccounts })
-    const res=await axios.post(`${BACKEND_URL}/api/user`,{
+    const res=await axios.post(`${BACKEND_URL}/api/user/register`,{
        email,password,name,aadharno:aadharNumber,mobileno:phoneNumber,accnos:bankAccounts
     });
+    console.log(res)
+    
+    navigate(`/verifyotp?userid=${res.data.user.id}&email=${res.data.user.email}`)
 
     console.log(res);
    
