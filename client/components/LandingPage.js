@@ -1,64 +1,22 @@
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
-import addSampleData from './PutData';
+import React from 'react';
+import { View, ScrollView, StyleSheet } from 'react-native';
+import Navbar from "../components/NavBar";
+import Hero from "../components/Hero";
+import Features from '../components/Features';
 
-const LandingPage = ({ navigation }) => {
-  useEffect(() => {
-    async function func() {
-      addSampleData();
-    }
-    func();
-  }, []);
+export default function LandingPage() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Welcome to Credit Risk Analyzer</Text>
-      <Text style={styles.subtitle}>Real-Time Credit Assessment Made Easy</Text>
-
-      <View style={styles.buttonContainer}>
-        <Button title="Sign Up" onPress={() => navigation.navigate('Signup')} />
-        <Button title="Sign In" onPress={() => navigation.navigate('Signin')} color="#6c63ff" />
-      </View>
-
-      <View style={styles.recordsContainer}>
-        <Button
-          title="View Categorized Messages"
-          onPress={() => navigation.navigate('CategorizedMessages')}
-        />
-        <Button title='View Accountpage' onPress={()=> navigation.navigate("account")}/>
-      </View>
-    </View>
+    <ScrollView style={styles.container}>
+      <Navbar />
+      <Hero />
+      <Features />
+    </ScrollView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-    paddingTop: 50,
+    backgroundColor: '#121212',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#333',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 20,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '60%',
-    marginBottom: 20,
-  },
-  recordsContainer: {
-    marginTop: 20,
-    width: '60%',
-  },
-});
-
-export default LandingPage;
+})
