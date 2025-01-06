@@ -30,7 +30,6 @@ app.listen(BACKEND_PORT,()=>{
 app.use("/api/user",userRouter);
 
 
-app.get("/check",(req,res)=>{
 
 
 app.get("/check",async (req:any,res:any)=>{

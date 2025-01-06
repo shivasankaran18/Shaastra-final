@@ -4,6 +4,7 @@ import { LineChart, XAxis, YAxis, Grid } from 'react-native-svg-charts';
 import axios from 'axios';
 import  Navbar  from '../components/NavBar';
 import { BACKEND_URL } from "../config";
+import { useNavigation } from '@react-navigation/native';
 
 // Mock data for the credit score graph
 const creditScoreData = [650, 680, 700, 720, 750, 780];
@@ -18,6 +19,7 @@ const recommendedBanks = [
 ];
 
 export default function Home() {
+  const navigation = useNavigation();
   const [CIBILScore, setCIBILScore] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -73,7 +75,7 @@ export default function Home() {
         </View>
       </View>
 
-      <TouchableOpacity style={styles.button} onPress={fetchCombinedCreditScore}>
+      <TouchableOpacity style={styles.button} onPress={()=> navigation.navigate("Transactions")}>
         {loading ? (
           <ActivityIndicator color="white" />
         ) : (

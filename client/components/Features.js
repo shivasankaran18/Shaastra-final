@@ -142,6 +142,7 @@ const styles = StyleSheet.create({
   featuresContainer: {
     padding: 20,
     backgroundColor: '#121212',
+    // backgroundColor : "red"
   },
   title: {
     fontSize: 24,
