@@ -1,55 +1,73 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { motion } from 'framer-motion';
+import { useNavigation } from '@react-navigation/native';
+import React, { useRef, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import { ArrowRight, Shield } from 'react-native-feather';
 
 export default function Hero() {
+    const navigation = useNavigation();
+  const opacityAnim = useRef(new Animated.Value(0)).current; // Animation for opacity
+  const translateYAnim = useRef(new Animated.Value(20)).current; // Animation for vertical movement
+
+  useEffect(() => {
+    Animated.timing(opacityAnim, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+
+    Animated.timing(translateYAnim, {
+      toValue: 0,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+  }, [opacityAnim, translateYAnim]);
+
   return (
     <View style={styles.heroContainer}>
       <View style={styles.overlay} />
       <View style={styles.contentContainer}>
-        <motion.View
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          style={styles.taglineContainer}
+        <Animated.View
+          style={[
+            styles.taglineContainer,
+            { opacity: opacityAnim, transform: [{ translateY: translateYAnim }] },
+          ]}
         >
           <Shield style={styles.icon} />
           <Text style={styles.taglineText}>Innovative Credit Risk Assessment</Text>
-        </motion.View>
+        </Animated.View>
 
-        <motion.Text
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          style={styles.title}
+        <Animated.Text
+          style={[
+            styles.title,
+            { opacity: opacityAnim, transform: [{ translateY: translateYAnim }] },
+          ]}
         >
           Smart Lending Decisions with Alternative Data
-        </motion.Text>
+        </Animated.Text>
 
-        <motion.Text
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          style={styles.subtitle}
+        <Animated.Text
+          style={[
+            styles.subtitle,
+            { opacity: opacityAnim, transform: [{ translateY: translateYAnim }] },
+          ]}
         >
           Unlock financial opportunities with our AI-powered credit assessment platform.
-        </motion.Text>
+        </Animated.Text>
 
-        <motion.View
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-          style={styles.buttonContainer}
+        <Animated.View
+          style={[
+            styles.buttonContainer,
+            { opacity: opacityAnim, transform: [{ translateY: translateYAnim }] },
+          ]}
         >
           <TouchableOpacity style={styles.primaryButton}>
-            <Text style={styles.primaryButtonText}>Get Started</Text>
+            <Text style={styles.primaryButtonText} onPress={()=> navigation.navigate("Home")}>Get Started</Text>
             <ArrowRight style={styles.arrowIcon} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.secondaryButton}>
             <Text style={styles.secondaryButtonText}>Learn More</Text>
           </TouchableOpacity>
-        </motion.View>
+        </Animated.View>
       </View>
     </View>
   );
@@ -128,5 +146,5 @@ const styles = StyleSheet.create({
   },
   secondaryButtonText: {
     color: '#4C51BF',
-    },
+  },
 });

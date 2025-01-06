@@ -1,8 +1,10 @@
 
 import { Router } from "express";
+import { userLogin, userReg } from "../controllers/userController";
 
 export const userRouter=Router();
 
-
+//@ts-ignore
 userRouter.post("/login",userLogin);
-userRouter.post("/register",registerLogin);
+//@ts-ignore
+userRouter.post("/register",userReg);

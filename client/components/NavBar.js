@@ -1,25 +1,30 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useRef, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { motion } from 'framer-motion';
 import { Shield } from 'react-native-feather';
 
 export default function Navbar() {
   const navigation = useNavigation();
+  const translateYAnim = useRef(new Animated.Value(-100)).current; // Animation for sliding in
+
+  useEffect(() => {
+    // Trigger the slide-in animation when the component mounts
+    Animated.timing(translateYAnim, {
+      toValue: 0,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+  }, [translateYAnim]);
 
   return (
-    <motion.View
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      style={styles.navbar}
-    >
+    <Animated.View style={[styles.navbar, { transform: [{ translateY: translateYAnim }] }]}>
       <View style={styles.container}>
         <View style={styles.logoContainer}>
           <Shield style={styles.icon} />
           <Text style={styles.title}>LendSure</Text>
         </View>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.button}>
+          <TouchableOpacity onPress={() => navigation.navigate('Signin')} style={styles.button}>
             <Text style={styles.buttonText}>Log in</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate('Signup')} style={styles.buttonSecondary}>
@@ -27,7 +32,7 @@ export default function Navbar() {
           </TouchableOpacity>
         </View>
       </View>
-    </motion.View>
+    </Animated.View>
   );
 }
 
@@ -82,4 +87,3 @@ const styles = StyleSheet.create({
     color: 'white',
   },
 });
-navbae.js

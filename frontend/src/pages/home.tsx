@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { Line, LineChart, XAxis, YAxis, ResponsiveContainer } from "recharts"
 import { Navbar } from '@/components/Navbar'
+import axios from 'axios'
+import { BACKEND_URL, DJANGO_URL } from '@/config'
 
 // Mock data for the credit score graph
 const creditScoreData = [
@@ -23,14 +25,27 @@ const recommendedBanks = [
   { name: 'Building Credit Bank', minScore: 600, color: 'bg-red-500', image: '/placeholder.svg?height=200&width=200' },
 ]
 
-export  function CreditScorePage() {
-  const [currentScore, setCurrentScore] = useState<number | null>(null)
+export function CreditScorePage() {
+  const [CIBILScore, setCIBILScore] = useState<number | null>(null);
+  const [loading, setLoading] = useState<boolean>(false); // To track loading state
+  const [error, setError] = useState<string | null>(null); // To track error state
 
-  const checkCreditScore = () => {
-    // In a real application, this would make an API call to get the actual credit score
-    const simulatedScore = Math.floor(Math.random() * (850 - 300 + 1)) + 300
-    setCurrentScore(simulatedScore)
-  }
+  // Function to fetch the combined credit score (CIBIL + Sentiment)
+  const fetchCombinedCreditScore = async () => {
+    setLoading(true);
+    setError(null); // Reset error on each attempt
+
+    try {
+      const response = await axios.post(`${BACKEND_URL}/api/credit-score`,{"account_number":"ACC106872241548"});
+      const combinedScore = response.data.predicted_score; // Assuming the response key is 'predicted_score'
+      setCIBILScore(combinedScore); // Set the combined score
+    } catch (error) {
+      console.error('Error fetching combined credit score:', error);
+      setError('Failed to fetch the credit score. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
       <div className="min-h-screen bg-black text-white p-4">
@@ -70,14 +85,14 @@ export  function CreditScorePage() {
 
         <div className="text-center mb-6">
           <Button 
-            onClick={checkCreditScore}
+            onClick={fetchCombinedCreditScore}
             className="bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600"
           >
             Check Credit Risk Score
           </Button>
-          {currentScore && (
+          {CIBILScore && (
             <p className="mt-4 text-xl">
-              Your current credit score: <span className="font-bold text-2xl">{currentScore}</span>
+              Your current credit score: <span className="font-bold text-2xl">{CIBILScore}</span>
             </p>
           )}
         </div>
@@ -85,7 +100,7 @@ export  function CreditScorePage() {
         <h2 className="text-2xl font-semibold mb-4 text-gray-300">Recommended Banks</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {recommendedBanks.map((bank, index) => (
-            <Card key={index} className={`bg-gray-800 border-gray-700 ${currentScore && currentScore >= bank.minScore ? 'ring-2 ring-green-500' : ''}`}>
+            <Card key={index} className={`bg-gray-800 border-gray-700 ${CIBILScore && CIBILScore >= bank.minScore ? 'ring-2 ring-green-500' : ''}`}>
               <CardHeader>
                 <CardTitle className="flex items-center justify-center">
                   <span className={`w-3 h-3 rounded-full mr-2 ${bank.color}`}></span>
@@ -104,7 +119,7 @@ export  function CreditScorePage() {
                 </div>
                 <div className="text-center">
                   <p className="text-gray-400">Minimum Score: {bank.minScore}</p>
-                  {currentScore && currentScore >= bank.minScore && (
+                  {CIBILScore && CIBILScore >= bank.minScore && (
                     <p className="text-green-500 mt-2">You qualify for this bank!</p>
                   )}
                 </div>
