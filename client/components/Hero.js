@@ -75,10 +75,11 @@ export default function Hero() {
 
 const styles = StyleSheet.create({
   heroContainer: {
-    minHeight: '100%',
+    minHeight: '35%',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#121212',
+    // backgroundColor:"red"
   },
   overlay: {
     position: 'absolute',
