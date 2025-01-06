@@ -18,6 +18,7 @@ export function LoginPage() {
          email,
          password
       })
+      console.log(res)
          localStorage.setItem("usertoken",res.data.token)
          navigate("/home");
 
@@ -42,7 +43,7 @@ export function LoginPage() {
                </CardTitle>
                <CardDescription className="text-gray-400">Enter your credentials to access your account.</CardDescription>
             </CardHeader>
-            <form >
+            <div >
                <CardContent className="space-y-4">
                   <div className="space-y-2">
                      <Label htmlFor="email" className="text-gray-300">Email</Label>
@@ -73,7 +74,7 @@ export function LoginPage() {
                      Sign In
                   </Button>
                </CardFooter>
-            </form>
+            </div>
          </Card>
       </div>
    )

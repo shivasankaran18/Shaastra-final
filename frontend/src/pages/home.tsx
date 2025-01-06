@@ -4,8 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { Line, LineChart, XAxis, YAxis, ResponsiveContainer } from "recharts"
 import { Navbar } from '@/components/Navbar'
+
 import axios from 'axios'
 import { BACKEND_URL, DJANGO_URL } from '@/config'
+import { Navbar2 } from '@/components/Navbar2'
 
 // Mock data for the credit score graph
 const creditScoreData = [
@@ -49,7 +51,7 @@ export function CreditScorePage() {
 
   return (
       <div className="min-h-screen bg-black text-white p-4">
-          <Navbar />
+          <Navbar2 />
           <br></br>
           <br></br>
       <div className="container mx-auto max-w-4xl">
