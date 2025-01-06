@@ -11,6 +11,15 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error
 from sklearn.preprocessing import LabelEncoder
 import os
+import nltk
+nltk.download('stopwords')
+from nltk.corpus import stopwords
+from nltk.stem import SnowballStemmer
+from django.http import JsonResponse
+import re
+import numpy as np
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 class TrainCIBILModelView(APIView):
     def post(self, request):
@@ -107,3 +116,103 @@ class GetCIBILScoreView(APIView):
 
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+data = [
+    "I love this product! It's amazing.",
+    "Absolutely terrible experience. I hate it.",
+    "It's okay, nothing fucking special but not bad.",
+    "This is the best thing I've ever used!",
+    "I'm very fucking disappointed. It broke immediately.",
+    "Pretty decent for the price.",
+    "Fantastic quality, highly recommend!",
+    "Worst purchase I've ever made.",
+    "It's alright, could be shit better.",
+    "I'm thrilled with this! Great buy."
+]
+
+swear_words = {'shit', 'fuck', 'damn', 'asshole', 'bitch', 'bastard', 'hell', 'crap', 'suck', 'fucker', 'bitchy'}
+
+# NLTK setup
+stop_words = set(stopwords.words('english'))
+stemmer = SnowballStemmer('english')
+punctuations_and_dummies = r"@\S+|https?:\S+|http?:\S|[^A-Za-z0-9]+"
+
+# Tokenizer setup
+tokenizer = Tokenizer(oov_token='<OOV>')  # Added OOV token for unseen words
+tokenizer.fit_on_texts(data)
+word_index = tokenizer.word_index
+vocab_size = len(word_index) + 1  # Adding 1 to handle 0 index for padding
+max_sequence_length = 30
+
+# Preprocessing function
+def preprocess(tweet, will_be_stemmed=False):
+    tweet = re.sub(punctuations_and_dummies, ' ', str(tweet).lower()).strip()
+    tokens = [
+        stemmer.stem(word) if will_be_stemmed else word
+        for word in tweet.split() if word not in stop_words
+    ]
+    return " ".join(tokens)
+
+def detect_swearing(tweet):
+    words = tweet.split()
+    for word in words:
+        if word in swear_words:
+            return True
+    return False
+
+def predict_sentiment(text):
+    # Preprocess the tweet
+    text = preprocess(text)
+
+    # Tokenize and pad the sequence
+    sequence = tokenizer.texts_to_sequences([text])
+    padded_sequence = pad_sequences(sequence, maxlen=max_sequence_length, padding='post')
+
+    # Mock prediction
+    prediction = np.random.rand(1, 3)  # Random prediction for now (3 classes)
+    sentiment_score = np.argmax(prediction)  # The sentiment: 0 (Negative), 1 (Neutral), 2 (Positive)
+
+    # Convert sentiment into score
+    score = 0
+    if sentiment_score == 0:
+        score = 0  # Negative
+    elif sentiment_score == 1:
+        score = 0.5  # Neutral
+    else:
+        score = 1  # Positive
+
+    # Reduce score if swear words are detected
+    if detect_swearing(text):
+        score = max(0, score - 0.2)  # Reduce score but keep it non-negative
+
+    return score
+
+class SentimentAPIView(APIView):
+    def post(self, request):
+        user_handle = request.data.get('user_handle')
+
+        if not user_handle:
+            return JsonResponse({"error": "User handle is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # For simplicity, mock some data based on user_handle (e.g., by using hardcoded tweets).
+        user_tweets = data  # In real-world use case, you'd fetch the user's tweets based on the handle.
+
+        # Calculate the sentiment score
+        total_score = 0
+        for tweet in user_tweets:
+            score = predict_sentiment(tweet)
+            total_score += score
+
+        # Calculate the average sentiment score
+        average_score = total_score / len(user_tweets)
+
+        # Classify the overall sentiment
+        if average_score < 0.5:
+            sentiment = "Negative"
+        elif average_score == 0.5:
+            sentiment = "Neutral"
+        else:
+            sentiment = "Positive"
+
+        return JsonResponse({"user_handle": user_handle, "sentiment_score": average_score, "sentiment": sentiment})

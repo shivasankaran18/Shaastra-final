@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('train/', views.TrainCIBILModelView.as_view(), name='train-cibil-model'),
     path('cibil/<str:sender_account_number>/', views.GetCIBILScoreView.as_view(), name='get-cibil-score'),
+    path('api/sentiment/', views.SentimentAPIView.as_view(), name='sentiment_api'),
 ]
